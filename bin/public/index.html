@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px 0;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        input {
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+    <script>
+        async function fetchBlockchain() {
+            const response = await fetch('/blockchain');
+            const data = await response.json();
+            document.getElementById('blockchain').textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function addBlock() {
+            const data = document.getElementById('data').value;
+            if (!data) {
+                alert('Please enter data for the block.');
+                return;
+            }
+            const response = await fetch('/add-block', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ data })
+            });
+            const result = await response.json();
+            alert(result.message);
+            fetchBlockchain();
+        }
+
+        async function validateBlockchain() {
+            const response = await fetch('/validate');
+            const { isValid } = await response.json();
+            alert(`Blockchain is ${isValid ? 'valid' : 'invalid'}`);
+        }
+    </script>
+</head>
+<body>
+    <h1>Blockchain Interface</h1>
+    <button onclick="fetchBlockchain()">View Blockchain</button>
+    <pre id="blockchain"></pre>
+
+    <h2>Add a Block</h2>
+    <input type="text" id="data" placeholder="Enter block data" />
+    <button onclick="addBlock()">Add Block</button>
+
+    <h2>Validate Blockchain</h2>
+    <button onclick="validateBlockchain()">Validate</button>
+</body>
+</html>
